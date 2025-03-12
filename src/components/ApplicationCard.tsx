@@ -1,4 +1,3 @@
-<lov-codelov-code>
 import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { MoreHorizontal, FileText, ExternalLink, Trash2, CalendarDays, Link as LinkIcon, Link2 } from 'lucide-react';
