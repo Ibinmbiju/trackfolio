@@ -8,7 +8,7 @@ const Logo: React.FC = () => {
       <div className="h-10 w-10 rounded-lg bg-gradient-primary flex items-center justify-center">
         <Briefcase className="h-6 w-6 text-white" />
       </div>
-      <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-primary">JobTrackr</span>
+      <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-primary">Trackfolio</span>
     </div>
   );
 };
