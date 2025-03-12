@@ -1,6 +1,7 @@
+<lov-codelov-code>
 import React, { useState } from 'react';
 import { format } from 'date-fns';
-import { MoreHorizontal, FileText, ExternalLink, Trash2, CalendarDays, Link as LinkIcon, Upload } from 'lucide-react';
+import { MoreHorizontal, FileText, ExternalLink, Trash2, CalendarDays, Link as LinkIcon, Link2 } from 'lucide-react';
 import { Application, Status } from '@/types';
 import { 
   Card,
@@ -70,13 +71,12 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
   const { updateStatus, updateApplication, deleteApplication } = useApplications();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showInterviewDialog, setShowInterviewDialog] = useState(false);
-  const [showCvUploadDialog, setShowCvUploadDialog] = useState(false);
+  const [showResumeDialog, setShowResumeDialog] = useState(false);
   const [interviewDate, setInterviewDate] = useState<Date | undefined>(
     application.interviewDate ? new Date(application.interviewDate) : undefined
   );
   const [interviewLink, setInterviewLink] = useState(application.interviewLink || '');
-  const [cvFile, setCvFile] = useState<File | null>(null);
-  
+  const [resumeLink, setResumeLink] = useState(application.resumeLink || '');
   
   const handleStatusChange = async (status: Status) => {
     if (status === 'Interview' && application.status !== 'Interview') {
@@ -95,14 +95,13 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
     setShowInterviewDialog(false);
   };
   
-  const handleCvUpload = async () => {
-    if (cvFile) {
+  const handleSaveResumeLink = async () => {
+    if (resumeLink) {
       await updateApplication(application.id, {
-        cvFileName: cvFile.name,
-        cvFile: cvFile
+        resumeLink: resumeLink
       });
     }
-    setShowCvUploadDialog(false);
+    setShowResumeDialog(false);
   };
   
   const handleDelete = async () => {
@@ -120,12 +119,6 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
 
   const handleCardClick = () => {
     navigate(`/application/${application.id}`);
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setCvFile(e.target.files[0]);
-    }
   };
 
   const statusColorClasses = statusColors[application.status];
@@ -159,8 +152,8 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
                 <DropdownMenuItem onClick={() => navigate(`/application/${application.id}/edit`)}>
                   Edit application
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setShowCvUploadDialog(true)}>
-                  Upload CV
+                <DropdownMenuItem onClick={() => setShowResumeDialog(true)}>
+                  Add Resume Link
                 </DropdownMenuItem>
                 {application.status === 'Interview' && (
                   <DropdownMenuItem onClick={() => setShowInterviewDialog(true)}>
@@ -221,10 +214,18 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
             </div>
           )}
           
-          {application.cvFileName && (
+          {application.resumeLink && (
             <div className="flex items-center text-xs mb-3 truncate">
               <FileText className={`h-4 w-4 mr-1 shrink-0 ${statusColorClasses.text}`} />
-              <span className={`${statusColorClasses.text} truncate`}>CV: {application.cvFileName}</span>
+              <a 
+                href={application.resumeLink} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline flex items-center truncate"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Resume <ExternalLink className="h-3 w-3 ml-1" />
+              </a>
             </div>
           )}
           
@@ -261,7 +262,7 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
         </CardFooter>
       </Card>
       
-      {/* Keep dialog components unchanged */}
+      {/* Keep dialog components */}
       {/* Delete Dialog */}
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent>
@@ -343,55 +344,41 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
         </DialogContent>
       </Dialog>
       
-      {/* CV Upload Dialog */}
-      <Dialog open={showCvUploadDialog} onOpenChange={setShowCvUploadDialog}>
+      {/* Resume Link Dialog */}
+      <Dialog open={showResumeDialog} onOpenChange={setShowResumeDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Upload Your CV</DialogTitle>
+            <DialogTitle>Add Resume Link</DialogTitle>
             <DialogDescription>
-              Upload a CV for your application to {application.companyName}.
+              Add a Google Drive link to your resume for {application.companyName}.
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4 py-2">
-            <div className="grid w-full max-w-sm items-center gap-1.5 mx-auto">
-              <Label htmlFor="cv-file">CV File</Label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:bg-gray-50 transition-colors">
-                <div className="flex flex-col items-center">
-                  <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                  <p className="text-sm font-medium mb-1 break-words w-full">
-                    {cvFile ? cvFile.name : "Click to upload or drag and drop"}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    PDF or DOCX (max 5MB)
-                  </p>
-                </div>
-                <Input 
-                  id="cv-file" 
-                  type="file" 
-                  accept=".pdf,.doc,.docx" 
-                  className="hidden"
-                  onChange={handleFileChange}
-                />
-              </div>
-              {application.cvFileName && (
-                <p className="text-xs text-gray-500 break-words">
-                  Current CV: {application.cvFileName}
-                </p>
-              )}
+            <div className="space-y-2">
+              <Label htmlFor="resume-link">Resume Link</Label>
+              <Input 
+                id="resume-link" 
+                placeholder="https://drive.google.com/file/..." 
+                value={resumeLink} 
+                onChange={(e) => setResumeLink(e.target.value)} 
+              />
+              <p className="text-xs text-gray-500">
+                Paste a Google Drive link to your resume document
+              </p>
             </div>
           </div>
           
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowCvUploadDialog(false)}>
+            <Button variant="outline" onClick={() => setShowResumeDialog(false)}>
               Cancel
             </Button>
             <Button 
               className="bg-gradient-primary text-white" 
-              onClick={handleCvUpload}
-              disabled={!cvFile}
+              onClick={handleSaveResumeLink}
+              disabled={!resumeLink}
             >
-              Upload CV
+              Save Resume Link
             </Button>
           </DialogFooter>
         </DialogContent>

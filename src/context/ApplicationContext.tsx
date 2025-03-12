@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Application, Status } from '../types';
 import { v4 as uuidv4 } from 'uuid';
@@ -53,13 +52,7 @@ export const ApplicationProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   // Save applications to localStorage whenever they change
   useEffect(() => {
-    // We need to remove the actual File object before saving to localStorage
-    const applicationsForStorage = applications.map(app => {
-      const { cvFile, ...appWithoutFile } = app;
-      return appWithoutFile;
-    });
-    
-    localStorage.setItem('applications', JSON.stringify(applicationsForStorage));
+    localStorage.setItem('applications', JSON.stringify(applications));
   }, [applications]);
 
   const addApplication = async (newApp: Omit<Application, 'id' | 'statusHistory'>) => {
@@ -106,29 +99,16 @@ export const ApplicationProvider: React.FC<{ children: React.ReactNode }> = ({ c
       setApplications(prev => 
         prev.map(app => {
           if (app.id === id) {
-            // If we're updating the CV file, we need to handle it specially
-            if (updatedData.cvFile) {
-              // In a real app, we'd upload the file to a server here
-              console.log('Would upload file:', updatedData.cvFile.name);
-              // For now, we just store the filename
-              toast({
-                title: "CV Uploaded",
-                description: `${updatedData.cvFile.name} successfully uploaded`,
-              });
-            }
-            
             return { ...app, ...updatedData };
           }
           return app;
         })
       );
       
-      if (!updatedData.cvFile) {
-        toast({
-          title: "Success",
-          description: "Application updated successfully",
-        });
-      }
+      toast({
+        title: "Success",
+        description: "Application updated successfully",
+      });
     } catch (err) {
       console.error('Failed to update application:', err);
       setError('Failed to update application');

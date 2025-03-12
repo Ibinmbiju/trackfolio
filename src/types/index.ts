@@ -8,8 +8,7 @@ export interface Application {
   jobUrl?: string;
   applicationDate: string;
   status: Status;
-  cvFileName?: string;
-  cvFile?: File | null;
+  resumeLink?: string;
   notes?: string;
   statusHistory: StatusHistory[];
   interviewDate?: string;

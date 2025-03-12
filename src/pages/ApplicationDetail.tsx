@@ -10,8 +10,8 @@ import {
   FileText,
   Globe,
   Clock,
-  Upload,
-  Link as LinkIcon
+  Link2,
+  LinkIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -52,8 +52,7 @@ const ApplicationDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { getApplicationById, deleteApplication, updateApplication } = useApplications();
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
-  const [showCvUploadDialog, setShowCvUploadDialog] = useState(false);
-  const [cvFile, setCvFile] = useState<File | null>(null);
+  const [showResumeDialog, setShowResumeDialog] = useState(false);
   const [showInterviewDialog, setShowInterviewDialog] = useState(false);
   
   const application = id ? getApplicationById(id) : undefined;
@@ -62,6 +61,7 @@ const ApplicationDetail: React.FC = () => {
     application?.interviewDate ? new Date(application.interviewDate) : undefined
   );
   const [interviewLink, setInterviewLink] = useState(application?.interviewLink || '');
+  const [resumeLink, setResumeLink] = useState(application?.resumeLink || '');
   
   const handleDelete = async () => {
     if (id) {
@@ -70,13 +70,12 @@ const ApplicationDetail: React.FC = () => {
     }
   };
   
-  const handleCvUpload = async () => {
-    if (id && cvFile) {
+  const handleSaveResumeLink = async () => {
+    if (id && resumeLink) {
       await updateApplication(id, {
-        cvFileName: cvFile.name,
-        cvFile: cvFile
+        resumeLink: resumeLink
       });
-      setShowCvUploadDialog(false);
+      setShowResumeDialog(false);
     }
   };
   
@@ -87,12 +86,6 @@ const ApplicationDetail: React.FC = () => {
         interviewLink: interviewLink || undefined
       });
       setShowInterviewDialog(false);
-    }
-  };
-  
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setCvFile(e.target.files[0]);
     }
   };
   
@@ -132,7 +125,7 @@ const ApplicationDetail: React.FC = () => {
     );
   }
 
-  const statusColorClass = statusBgColors[application!.status];
+  const statusColorClass = statusBgColors[application.status];
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -148,8 +141,8 @@ const ApplicationDetail: React.FC = () => {
       <div className={`rounded-lg shadow-sm p-6 ${statusColorClass}`}>
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
           <div>
-            <h1 className="text-2xl font-bold">{application!.position}</h1>
-            <p className="text-gray-600 text-lg">{application!.companyName}</p>
+            <h1 className="text-2xl font-bold">{application.position}</h1>
+            <p className="text-gray-600 text-lg">{application.companyName}</p>
           </div>
           
           <div className="flex gap-3">
@@ -221,46 +214,53 @@ const ApplicationDetail: React.FC = () => {
           </Card>
         </div>
         
-        {/* CV and Interview Details Section */}
+        {/* Resume Link and Interview Details Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <Card className="bg-white">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center gap-2">
                 <FileText className="h-5 w-5 text-blue-600" />
-                CV Information
+                Resume
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
-              {application.cvFileName ? (
+              {application.resumeLink ? (
                 <div className="flex items-center justify-between">
-                  <p className="text-gray-700">{application.cvFileName}</p>
+                  <a 
+                    href={application.resumeLink} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline flex items-center"
+                  >
+                    View Resume <ExternalLink className="h-3 w-3 ml-1" />
+                  </a>
                   <Button 
                     variant="outline" 
                     size="sm" 
                     className="gap-1 text-blue-700 border-blue-200"
-                    onClick={() => setShowCvUploadDialog(true)}
+                    onClick={() => setShowResumeDialog(true)}
                   >
-                    <Upload className="h-3 w-3" /> Update
+                    <Edit className="h-3 w-3" /> Update
                   </Button>
                 </div>
               ) : (
                 <div className="text-center py-4">
                   <FileText className="h-10 w-10 text-gray-300 mx-auto mb-2" />
-                  <p className="text-gray-500 mb-3">No CV uploaded yet</p>
+                  <p className="text-gray-500 mb-3">No resume link added yet</p>
                   <Button 
                     variant="outline" 
                     size="sm" 
                     className="gap-1 text-blue-700 border-blue-200"
-                    onClick={() => setShowCvUploadDialog(true)}
+                    onClick={() => setShowResumeDialog(true)}
                   >
-                    <Upload className="h-3 w-3" /> Upload CV
+                    <Link2 className="h-3 w-3" /> Add Resume Link
                   </Button>
                 </div>
               )}
             </CardContent>
           </Card>
           
-          {application!.status === 'Interview' && (
+          {application.status === 'Interview' && (
             <Card className="bg-white">
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg flex items-center gap-2">
@@ -269,12 +269,12 @@ const ApplicationDetail: React.FC = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                {application!.interviewDate ? (
+                {application.interviewDate ? (
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-500">Interview Date</p>
-                        <p className="font-medium">{formatDate(application!.interviewDate)}</p>
+                        <p className="font-medium">{formatDate(application.interviewDate)}</p>
                       </div>
                       <Button 
                         variant="outline" 
@@ -286,16 +286,16 @@ const ApplicationDetail: React.FC = () => {
                       </Button>
                     </div>
                     
-                    {application!.interviewLink && (
+                    {application.interviewLink && (
                       <div>
                         <p className="text-sm text-gray-500">Interview Link</p>
                         <a 
-                          href={application!.interviewLink} 
+                          href={application.interviewLink} 
                           target="_blank" 
                           rel="noopener noreferrer" 
                           className="text-blue-600 hover:underline flex items-center text-sm mt-1"
                         >
-                          <LinkIcon className="h-3 w-3 mr-1" /> {application!.interviewLink}
+                          <LinkIcon className="h-3 w-3 mr-1" /> {application.interviewLink}
                         </a>
                       </div>
                     )}
@@ -319,6 +319,7 @@ const ApplicationDetail: React.FC = () => {
           )}
         </div>
         
+        {/* ... keep existing code (notes and status history sections) */}
         {application.notes && (
           <div className="mb-8">
             <h2 className="text-lg font-bold mb-3">Notes</h2>
@@ -383,55 +384,41 @@ const ApplicationDetail: React.FC = () => {
         </DialogContent>
       </Dialog>
       
-      {/* CV Upload Dialog */}
-      <Dialog open={showCvUploadDialog} onOpenChange={setShowCvUploadDialog}>
+      {/* Resume Link Dialog */}
+      <Dialog open={showResumeDialog} onOpenChange={setShowResumeDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Upload Your CV</DialogTitle>
+            <DialogTitle>Add Resume Link</DialogTitle>
             <DialogDescription>
-              Upload a CV for your application to {application.companyName}.
+              Add a Google Drive link to your resume for {application.companyName}.
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4 py-2">
-            <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label htmlFor="cv-file">CV File</Label>
-              <label htmlFor="cv-file-upload" className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:bg-gray-50 transition-colors cursor-pointer">
-                <div className="flex flex-col items-center">
-                  <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                  <p className="text-sm font-medium mb-1">
-                    {cvFile ? cvFile.name : "Click to upload or drag and drop"}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    PDF or DOCX (max 5MB)
-                  </p>
-                </div>
-                <Input 
-                  id="cv-file-upload" 
-                  type="file" 
-                  accept=".pdf,.doc,.docx" 
-                  className="hidden"
-                  onChange={handleFileChange}
-                />
-              </label>
-              {application.cvFileName && (
-                <p className="text-xs text-gray-500">
-                  Current CV: {application.cvFileName}
-                </p>
-              )}
+            <div className="space-y-2">
+              <Label htmlFor="resume-link">Resume Link</Label>
+              <Input 
+                id="resume-link" 
+                placeholder="https://drive.google.com/file/..." 
+                value={resumeLink} 
+                onChange={(e) => setResumeLink(e.target.value)} 
+              />
+              <p className="text-xs text-gray-500">
+                Paste a Google Drive link to your resume document
+              </p>
             </div>
           </div>
           
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowCvUploadDialog(false)}>
+            <Button variant="outline" onClick={() => setShowResumeDialog(false)}>
               Cancel
             </Button>
             <Button 
               className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white" 
-              onClick={handleCvUpload}
-              disabled={!cvFile}
+              onClick={handleSaveResumeLink}
+              disabled={!resumeLink}
             >
-              Upload CV
+              Save Resume Link
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -443,7 +430,7 @@ const ApplicationDetail: React.FC = () => {
           <DialogHeader>
             <DialogTitle>Set Interview Details</DialogTitle>
             <DialogDescription>
-              Add details for your upcoming interview at {application!.companyName}.
+              Add details for your upcoming interview at {application.companyName}.
             </DialogDescription>
           </DialogHeader>
           
