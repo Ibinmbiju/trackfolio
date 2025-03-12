@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,30 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Job tracker specific colors
+				success: {
+					DEFAULT: '#10B981',
+					foreground: '#FFFFFF',
+				},
+				warning: {
+					DEFAULT: '#F59E0B',
+					foreground: '#FFFFFF',
+				},
+				danger: {
+					DEFAULT: '#EF4444',
+					foreground: '#FFFFFF',
+				},
+				app: {
+					indigo: '#4F46E5',
+					violet: '#7C3AED',
+					background: '#F9FAFB',
+					'text-primary': '#1F2937',
+					'text-secondary': '#6B7280',
 				}
+			},
+			fontFamily: {
+				inter: ['Inter', 'sans-serif'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -89,6 +113,9 @@ export default {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out'
+			},
+			backgroundImage: {
+				'gradient-primary': 'linear-gradient(90deg, #4F46E5 0%, #7C3AED 100%)',
 			}
 		}
 	},
