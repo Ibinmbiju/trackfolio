@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -12,8 +11,7 @@ import {
   Globe,
   Clock,
   Upload,
-  Calendar,
-  Link
+  Link as LinkIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -33,6 +31,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { cn } from '@/lib/utils';
 import { useApplications } from '@/context/ApplicationContext';
 import { Status } from '@/types';
+import { Calendar } from '@/components/ui/calendar';
 
 const statusColors: Record<Status, { bg: string, text: string }> = {
   'Applied': { bg: 'bg-blue-600', text: 'text-white' },
@@ -133,7 +132,7 @@ const ApplicationDetail: React.FC = () => {
     );
   }
 
-  const statusColorClass = statusBgColors[application.status];
+  const statusColorClass = statusBgColors[application!.status];
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -149,8 +148,8 @@ const ApplicationDetail: React.FC = () => {
       <div className={`rounded-lg shadow-sm p-6 ${statusColorClass}`}>
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
           <div>
-            <h1 className="text-2xl font-bold">{application.position}</h1>
-            <p className="text-gray-600 text-lg">{application.companyName}</p>
+            <h1 className="text-2xl font-bold">{application!.position}</h1>
+            <p className="text-gray-600 text-lg">{application!.companyName}</p>
           </div>
           
           <div className="flex gap-3">
@@ -261,21 +260,21 @@ const ApplicationDetail: React.FC = () => {
             </CardContent>
           </Card>
           
-          {application.status === 'Interview' && (
+          {application!.status === 'Interview' && (
             <Card className="bg-white">
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-amber-600" />
+                  <CalendarDays className="h-5 w-5 text-amber-600" />
                   Interview Details
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                {application.interviewDate ? (
+                {application!.interviewDate ? (
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-500">Interview Date</p>
-                        <p className="font-medium">{formatDate(application.interviewDate)}</p>
+                        <p className="font-medium">{formatDate(application!.interviewDate)}</p>
                       </div>
                       <Button 
                         variant="outline" 
@@ -287,23 +286,23 @@ const ApplicationDetail: React.FC = () => {
                       </Button>
                     </div>
                     
-                    {application.interviewLink && (
+                    {application!.interviewLink && (
                       <div>
                         <p className="text-sm text-gray-500">Interview Link</p>
                         <a 
-                          href={application.interviewLink} 
+                          href={application!.interviewLink} 
                           target="_blank" 
                           rel="noopener noreferrer" 
                           className="text-blue-600 hover:underline flex items-center text-sm mt-1"
                         >
-                          <Link className="h-3 w-3 mr-1" /> {application.interviewLink}
+                          <LinkIcon className="h-3 w-3 mr-1" /> {application!.interviewLink}
                         </a>
                       </div>
                     )}
                   </div>
                 ) : (
                   <div className="text-center py-4">
-                    <Calendar className="h-10 w-10 text-gray-300 mx-auto mb-2" />
+                    <CalendarDays className="h-10 w-10 text-gray-300 mx-auto mb-2" />
                     <p className="text-gray-500 mb-3">No interview details added</p>
                     <Button 
                       variant="outline" 
@@ -311,7 +310,7 @@ const ApplicationDetail: React.FC = () => {
                       className="gap-1 text-amber-700 border-amber-200"
                       onClick={() => setShowInterviewDialog(true)}
                     >
-                      <Calendar className="h-3 w-3" /> Set Interview Details
+                      <CalendarDays className="h-3 w-3" /> Set Interview Details
                     </Button>
                   </div>
                 )}
@@ -444,7 +443,7 @@ const ApplicationDetail: React.FC = () => {
           <DialogHeader>
             <DialogTitle>Set Interview Details</DialogTitle>
             <DialogDescription>
-              Add details for your upcoming interview at {application.companyName}.
+              Add details for your upcoming interview at {application!.companyName}.
             </DialogDescription>
           </DialogHeader>
           
@@ -468,7 +467,7 @@ const ApplicationDetail: React.FC = () => {
                   <Calendar
                     mode="single"
                     selected={interviewDate}
-                    onSelect={setInterviewDate}
+                    onSelect={(date) => setInterviewDate(date)}
                     initialFocus
                     className="p-3 pointer-events-auto"
                   />

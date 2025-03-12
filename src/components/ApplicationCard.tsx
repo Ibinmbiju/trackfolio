@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { format } from 'date-fns';
-import { MoreHorizontal, FileText, ExternalLink, Trash2, Calendar, Link, Upload } from 'lucide-react';
+import { MoreHorizontal, FileText, ExternalLink, Trash2, CalendarDays, Link as LinkIcon, Upload } from 'lucide-react';
 import { Application, Status } from '@/types';
 import { 
   Card,
@@ -117,7 +116,7 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
       return dateString;
     }
   };
-
+  
   const handleCardClick = () => {
     navigate(`/application/${application.id}`);
   };
@@ -181,7 +180,7 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
         <CardContent className="pb-2">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center">
-              <Calendar className={`h-4 w-4 mr-1 ${statusColorClasses.text}`} />
+              <CalendarDays className={`h-4 w-4 mr-1 ${statusColorClasses.text}`} />
               <span className={`text-xs ${statusColorClasses.text}`}>
                 Applied: {formatDate(application.applicationDate)}
               </span>
@@ -201,7 +200,7 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
           
           {application.interviewDate && application.status === 'Interview' && (
             <div className="flex items-center mb-3 p-2 bg-amber-100 rounded-md">
-              <Calendar className="h-4 w-4 text-amber-700 mr-2" />
+              <CalendarDays className="h-4 w-4 text-amber-700 mr-2" />
               <div className="flex flex-col">
                 <span className="text-xs font-medium text-amber-800">
                   Interview: {formatDate(application.interviewDate)}
@@ -214,7 +213,7 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
                     className="text-blue-600 hover:underline flex items-center text-xs mt-1"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <Link className="h-3 w-3 mr-1" /> Meeting link
+                    <LinkIcon className="h-3 w-3 mr-1" /> Meeting link
                   </a>
                 )}
               </div>
@@ -312,7 +311,7 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
                   <Calendar
                     mode="single"
                     selected={interviewDate}
-                    onSelect={setInterviewDate}
+                    onSelect={(date) => setInterviewDate(date)}
                     initialFocus
                     className="p-3 pointer-events-auto"
                   />
