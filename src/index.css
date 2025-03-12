@@ -84,7 +84,42 @@
   }
 
   body {
-    @apply bg-app-background text-app-text-primary font-inter;
+    @apply bg-app-background text-app-text-primary font-inter overflow-x-hidden;
+  }
+
+  /* Improve tap targets on mobile */
+  button, a {
+    @apply min-h-9 min-w-9;
+  }
+}
+
+/* Mobile-friendly containers */
+.container {
+  @apply px-4 mx-auto w-full;
+  max-width: 100%;
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
   }
 }
 
@@ -135,4 +170,26 @@
 @keyframes scaleIn {
   from { transform: scale(0.95); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
+}
+
+/* Mobile specific adjustments */
+@media (max-width: 640px) {
+  .card-content-mobile {
+    padding: 0.75rem !important;
+  }
+  
+  .text-mobile-sm {
+    font-size: 0.875rem !important;
+  }
+  
+  .text-mobile-xs {
+    font-size: 0.75rem !important;
+  }
+}
+
+/* Prevent content overflow */
+.truncate-content {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }

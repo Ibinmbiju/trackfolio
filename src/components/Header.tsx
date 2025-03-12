@@ -5,7 +5,6 @@ import {
   LogOut, 
   Menu, 
   Search,
-  PlusCircle,
   User,
   Settings,
   HelpCircle
@@ -71,16 +70,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar, showSearch = false }) =>
           </div>
         )}
         
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="outline" 
-            className="flex"
-            onClick={() => navigate('/application/new')}
-          >
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add Application
-          </Button>
-          
+        <div className="flex items-center">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full">

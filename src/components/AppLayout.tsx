@@ -21,7 +21,7 @@ const AppLayout: React.FC = () => {
         showSearch={true}
       />
       
-      <main className="flex-1 container py-6 px-4 md:px-6">
+      <main className="flex-1 container py-4 sm:py-6 px-3 sm:px-4 md:px-6 mx-auto w-full max-w-full overflow-x-hidden">
         <Outlet />
       </main>
     </div>

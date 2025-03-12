@@ -77,6 +77,7 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
   const [interviewLink, setInterviewLink] = useState(application.interviewLink || '');
   const [cvFile, setCvFile] = useState<File | null>(null);
   
+  
   const handleStatusChange = async (status: Status) => {
     if (status === 'Interview' && application.status !== 'Interview') {
       setShowInterviewDialog(true);
@@ -116,7 +117,7 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
       return dateString;
     }
   };
-  
+
   const handleCardClick = () => {
     navigate(`/application/${application.id}`);
   };
@@ -132,12 +133,12 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
   return (
     <>
       <Card 
-        className={`h-full transition-all duration-300 cursor-pointer ${statusColorClasses.bg} ${statusColorClasses.border} border-2 ${statusColorClasses.hoverBg} shadow-sm hover:shadow-md`}
+        className={`h-full transition-all duration-300 cursor-pointer ${statusColorClasses.bg} ${statusColorClasses.border} border-2 ${statusColorClasses.hoverBg} shadow-sm hover:shadow-md overflow-hidden`}
         onClick={handleCardClick}
       >
-        <CardHeader className={`pb-2 ${statusColorClasses.text}`}>
+        <CardHeader className={`pb-2 ${statusColorClasses.text} p-4 sm:p-6`}>
           <div className="flex justify-between items-start" onClick={(e) => e.stopPropagation()}>
-            <div>
+            <div className="flex-1 min-w-0">
               <CardTitle className="text-lg font-semibold line-clamp-1">
                 {application.companyName}
               </CardTitle>
@@ -147,7 +148,7 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-current">
+                <Button variant="ghost" size="icon" className="text-current -mr-2">
                   <MoreHorizontal className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
@@ -177,8 +178,8 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
             </DropdownMenu>
           </div>
         </CardHeader>
-        <CardContent className="pb-2">
-          <div className="flex items-center justify-between mb-3">
+        <CardContent className="pb-2 px-4 sm:px-6">
+          <div className="flex items-center justify-between mb-3 flex-wrap gap-1">
             <div className="flex items-center">
               <CalendarDays className={`h-4 w-4 mr-1 ${statusColorClasses.text}`} />
               <span className={`text-xs ${statusColorClasses.text}`}>
@@ -200,9 +201,9 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
           
           {application.interviewDate && application.status === 'Interview' && (
             <div className="flex items-center mb-3 p-2 bg-amber-100 rounded-md">
-              <CalendarDays className="h-4 w-4 text-amber-700 mr-2" />
-              <div className="flex flex-col">
-                <span className="text-xs font-medium text-amber-800">
+              <CalendarDays className="h-4 w-4 text-amber-700 mr-2 shrink-0" />
+              <div className="flex flex-col min-w-0">
+                <span className="text-xs font-medium text-amber-800 truncate">
                   Interview: {formatDate(application.interviewDate)}
                 </span>
                 {application.interviewLink && (
@@ -210,10 +211,10 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
                     href={application.interviewLink} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline flex items-center text-xs mt-1"
+                    className="text-blue-600 hover:underline flex items-center text-xs mt-1 truncate"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <LinkIcon className="h-3 w-3 mr-1" /> Meeting link
+                    <LinkIcon className="h-3 w-3 mr-1 shrink-0" /> Meeting link
                   </a>
                 )}
               </div>
@@ -221,9 +222,9 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
           )}
           
           {application.cvFileName && (
-            <div className="flex items-center text-xs mb-3">
-              <FileText className={`h-4 w-4 mr-1 ${statusColorClasses.text}`} />
-              <span className={statusColorClasses.text}>CV: {application.cvFileName}</span>
+            <div className="flex items-center text-xs mb-3 truncate">
+              <FileText className={`h-4 w-4 mr-1 shrink-0 ${statusColorClasses.text}`} />
+              <span className={`${statusColorClasses.text} truncate`}>CV: {application.cvFileName}</span>
             </div>
           )}
           
@@ -233,14 +234,14 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
             </p>
           )}
         </CardContent>
-        <CardFooter className="flex items-center justify-between pt-0" onClick={(e) => e.stopPropagation()}>
+        <CardFooter className="flex items-center justify-between pt-0 px-4 sm:px-6 pb-4 sm:pb-6" onClick={(e) => e.stopPropagation()}>
           <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColorClasses.text} ${statusColorClasses.bg}`}>
             {application.status}
           </span>
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className={statusColorClasses.text}>Update Status</Button>
+              <Button variant="outline" size="sm" className={statusColorClasses.text}>Update</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => handleStatusChange('Applied')}>
@@ -260,6 +261,7 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
         </CardFooter>
       </Card>
       
+      {/* Keep dialog components unchanged */}
       {/* Delete Dialog */}
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent>
@@ -352,12 +354,12 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
           </DialogHeader>
           
           <div className="space-y-4 py-2">
-            <div className="grid w-full max-w-sm items-center gap-1.5">
+            <div className="grid w-full max-w-sm items-center gap-1.5 mx-auto">
               <Label htmlFor="cv-file">CV File</Label>
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:bg-gray-50 transition-colors">
                 <div className="flex flex-col items-center">
                   <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                  <p className="text-sm font-medium mb-1">
+                  <p className="text-sm font-medium mb-1 break-words w-full">
                     {cvFile ? cvFile.name : "Click to upload or drag and drop"}
                   </p>
                   <p className="text-xs text-gray-500">
@@ -373,7 +375,7 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
                 />
               </div>
               {application.cvFileName && (
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 break-words">
                   Current CV: {application.cvFileName}
                 </p>
               )}
