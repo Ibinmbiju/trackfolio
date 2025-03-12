@@ -74,20 +74,11 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar, showSearch = false }) =>
         <div className="flex items-center gap-3">
           <Button 
             variant="outline" 
-            className="hidden md:flex"
+            className="flex"
             onClick={() => navigate('/application/new')}
           >
             <PlusCircle className="mr-2 h-4 w-4" />
             Add Application
-          </Button>
-          
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="md:hidden"
-            onClick={() => navigate('/application/new')}
-          >
-            <PlusCircle className="h-5 w-5" />
           </Button>
           
           <DropdownMenu>
