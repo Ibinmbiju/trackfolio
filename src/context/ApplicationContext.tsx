@@ -53,7 +53,13 @@ export const ApplicationProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   // Save applications to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem('applications', JSON.stringify(applications));
+    // We need to remove the actual File object before saving to localStorage
+    const applicationsForStorage = applications.map(app => {
+      const { cvFile, ...appWithoutFile } = app;
+      return appWithoutFile;
+    });
+    
+    localStorage.setItem('applications', JSON.stringify(applicationsForStorage));
   }, [applications]);
 
   const addApplication = async (newApp: Omit<Application, 'id' | 'statusHistory'>) => {
@@ -98,14 +104,31 @@ export const ApplicationProvider: React.FC<{ children: React.ReactNode }> = ({ c
       await new Promise(resolve => setTimeout(resolve, 500));
       
       setApplications(prev => 
-        prev.map(app => 
-          app.id === id ? { ...app, ...updatedData } : app
-        )
+        prev.map(app => {
+          if (app.id === id) {
+            // If we're updating the CV file, we need to handle it specially
+            if (updatedData.cvFile) {
+              // In a real app, we'd upload the file to a server here
+              console.log('Would upload file:', updatedData.cvFile.name);
+              // For now, we just store the filename
+              toast({
+                title: "CV Uploaded",
+                description: `${updatedData.cvFile.name} successfully uploaded`,
+              });
+            }
+            
+            return { ...app, ...updatedData };
+          }
+          return app;
+        })
       );
-      toast({
-        title: "Success",
-        description: "Application updated successfully",
-      });
+      
+      if (!updatedData.cvFile) {
+        toast({
+          title: "Success",
+          description: "Application updated successfully",
+        });
+      }
     } catch (err) {
       console.error('Failed to update application:', err);
       setError('Failed to update application');

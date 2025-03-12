@@ -8,7 +8,8 @@ import {
   CalendarDays,
   Clock,
   ArrowDownAZ,
-  ArrowUpAZ
+  ArrowUpAZ,
+  Filter
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -53,27 +54,29 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Job Applications</h1>
-          <p className="text-app-text-secondary">
-            Track and manage your job applications
-          </p>
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 rounded-xl shadow-md text-white mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold">Job Applications</h1>
+            <p className="text-blue-100">
+              Track and manage your job applications
+            </p>
+          </div>
+          <Button 
+            className="bg-white text-indigo-700 hover:bg-blue-50 shadow-lg gap-2" 
+            onClick={() => navigate('/application/new')}
+          >
+            <Plus className="h-4 w-4" /> Add Application
+          </Button>
         </div>
-        <Button 
-          className="gradient-btn gap-2" 
-          onClick={() => navigate('/application/new')}
-        >
-          <Plus className="h-4 w-4" /> Add Application
-        </Button>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-3 md:gap-4">
+      <div className="flex flex-col md:flex-row gap-3 md:gap-4 bg-white p-4 rounded-lg shadow-sm mb-6">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-blue-500" />
           <Input
             placeholder="Search applications..."
-            className="pl-9"
+            className="pl-9 border-blue-200 focus-visible:ring-blue-500"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -84,8 +87,11 @@ const Dashboard: React.FC = () => {
             value={statusFilter}
             onValueChange={(value) => setStatusFilter(value as Status | 'All')}
           >
-            <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="Filter by status" />
+            <SelectTrigger className="w-[160px] border-blue-200">
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-blue-500" />
+                <SelectValue placeholder="Filter by status" />
+              </div>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="All">All Statuses</SelectItem>
@@ -98,7 +104,7 @@ const Dashboard: React.FC = () => {
           
           <Button 
             variant="outline"
-            className="gap-2"
+            className="gap-2 border-blue-200 text-blue-700"
             onClick={toggleSortOrder}
           >
             {sortOrder === 'asc' ? (
@@ -113,17 +119,21 @@ const Dashboard: React.FC = () => {
 
       {loading ? (
         <div className="flex justify-center py-12">
-          <p>Loading applications...</p>
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent align-[-0.125em]" role="status">
+            <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+              Loading...
+            </span>
+          </div>
         </div>
       ) : filteredApplications.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed rounded-lg">
+        <div className="flex flex-col items-center justify-center py-12 bg-blue-50 border-2 border-dashed border-blue-200 rounded-lg">
           {applications.length === 0 ? (
             <>
-              <Briefcase className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium mb-2">No applications yet</h3>
-              <p className="text-app-text-secondary mb-6">Start tracking your job applications.</p>
+              <Briefcase className="h-12 w-12 text-blue-400 mb-4" />
+              <h3 className="text-lg font-medium text-blue-800 mb-2">No applications yet</h3>
+              <p className="text-blue-600 mb-6">Start tracking your job applications.</p>
               <Button 
-                className="gradient-btn gap-2" 
+                className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white gap-2" 
                 onClick={() => navigate('/application/new')}
               >
                 <Plus className="h-4 w-4" /> Add your first application
@@ -131,9 +141,9 @@ const Dashboard: React.FC = () => {
             </>
           ) : (
             <>
-              <Search className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium mb-2">No matching applications</h3>
-              <p className="text-app-text-secondary">
+              <Search className="h-12 w-12 text-blue-400 mb-4" />
+              <h3 className="text-lg font-medium text-blue-800 mb-2">No matching applications</h3>
+              <p className="text-blue-600">
                 Try adjusting your search or filter criteria
               </p>
             </>

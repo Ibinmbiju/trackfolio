@@ -9,8 +9,11 @@ export interface Application {
   applicationDate: string;
   status: Status;
   cvFileName?: string;
+  cvFile?: File | null;
   notes?: string;
   statusHistory: StatusHistory[];
+  interviewDate?: string;
+  interviewLink?: string;
 }
 
 export interface StatusHistory {
